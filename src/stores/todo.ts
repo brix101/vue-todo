@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
 export type Todo = {
-  id: number
+  id: string
   text: string
   done: boolean
 }
@@ -18,23 +18,21 @@ export const useTodoStore = defineStore('todos', {
   }),
   getters: {},
   actions: {
-    addTodo(text: string) {
-      const id = new Date().getTime()
-      this.items.push({ text, id, done: false })
+    add(text: string) {
+      this.items.push({ id: crypto.randomUUID(), text, done: false })
     },
-    toggleTodo(id: number) {
+    toggle(id: Todo['id']) {
       const todo = this.items.find((t) => t.id === id)
       if (todo) todo.done = !todo.done
     },
-    removeTodo(id: number) {
-      // const index = this.items.findIndex((todo) => todo.id === id)
-      //
-      // // 2. If it exists (index is not -1), pluck it right out!
-      // if (index !== -1) {
-      //   this.items.splice(index, 1)
-      // }
-
+    remove(id: Todo['id']) {
       this.items = this.items.filter((todo) => todo.id !== id)
+    },
+    update(item: Todo) {
+      const todo = this.items.find((t) => t.id === item.id)
+      if (todo) {
+        Object.assign(todo, item)
+      }
     },
   },
 })
